@@ -15,7 +15,7 @@ const svg = d3.select('body')
 //  - links are always source < target; edge directions are set by 'left' and 'right'.
 const nodes = [
   { id: 0, reflexive: false },
-  { id: 1, reflexive: true },
+  { id: 1, reflexive: false },
   { id: 2, reflexive: false }
 ];
 let lastNodeId = 2;
@@ -125,7 +125,7 @@ function restart() {
 
   // update existing links
   path.classed('selected', (d) => d === selectedLink)
-    .style('marker-start', (d) => d.left ? 'url(#start-arrow)' : '')
+    .style('marker-start', (d) => d.left ? 'url(#end-arrow)' : '')
     .style('marker-end', (d) => d.right ? 'url(#end-arrow)' : '');
 
   // remove old links
@@ -135,7 +135,7 @@ function restart() {
   path = path.enter().append('svg:path')
     .attr('class', 'link')
     .classed('selected', (d) => d === selectedLink)
-    .style('marker-start', (d) => d.left ? 'url(#start-arrow)' : '')
+    .style('marker-start', (d) => d.left ? 'url(#end-arrow)' : '')
     .style('marker-end', (d) => d.right ? 'url(#end-arrow)' : '')
     .on('mousedown', (d) => {
       if (d3.event.ctrlKey) return;
