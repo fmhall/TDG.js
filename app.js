@@ -16,7 +16,8 @@ const svg = d3.select('body')
 const nodes = [
   { id: 0, weight: 0, reflexive: false },
   { id: 1, weight: 0, reflexive: false },
-  { id: 2, weight: 0, reflexive: false }
+  { id: 2, weight: 0, reflexive: false },
+  { id: 3, weight: 0, reflexive: false }
 ];
 let lastNodeId = 3;
 
@@ -154,7 +155,8 @@ function restart() {
   // update existing nodes (reflexive & selected visual states)
   circle.selectAll('circle')
     .style('fill', (d) => (d === selectedNode) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id))
-    .classed('reflexive', (d) => d.reflexive);
+    .classed('reflexive', (d) => d.reflexive)
+    .classed('weight', (d) => {d.weight})
 
   // remove old nodes
   circle.exit().remove();
@@ -168,6 +170,7 @@ function restart() {
     .style('fill', (d) => (d === selectedNode) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id))
     .style('stroke', (d) => d3.rgb(colors(d.id)).darker().toString())
     .classed('reflexive', (d) => d.reflexive)
+    .classed('weight', (d) => d.weight)
     .on('mouseover', function (d) {
       if (!mousedownNode || d === mousedownNode) return;
       // enlarge target node
@@ -191,7 +194,7 @@ function restart() {
         .classed('hidden', false)
         .attr('d', `M${mousedownNode.x},${mousedownNode.y}L${mousedownNode.x},${mousedownNode.y}`);
 
-      restart();
+      //restart();
     })
     .on('mouseup', function (d) {
       if (!mousedownNode) return;
@@ -234,8 +237,8 @@ function restart() {
   g.append('svg:text')
     .attr('x', 0)
     .attr('y', 4)
-    .attr('class', 'id')
-    .text((d) => d.id);
+    .attr('class', 'weight')
+    .text((d) => d.weight);
 
   circle = g.merge(circle);
 
@@ -255,7 +258,7 @@ function mousedown() {
 
   // insert new node at point
   const point = d3.mouse(this);
-  const node = { id: ++lastNodeId, reflexive: false, x: point[0], y: point[1] };
+  const node = { id: ++lastNodeId, reflexive: false, weight: 0, x: point[0], y: point[1] };
   nodes.push(node);
 
   restart();
@@ -322,30 +325,45 @@ function keydown() {
       selectedNode = null;
       restart();
       break;
-    case 66: // B
-      if (selectedLink) {
-        // set link direction to both left and right
-        selectedLink.left = true;
-        selectedLink.right = true;
-      }
-      restart();
-      break;
-    case 76: // L
-      if (selectedLink) {
-        // set link direction to left only
-        selectedLink.left = true;
-        selectedLink.right = false;
-      }
-      restart();
-      break;
-    case 82: // R
+    // case 66: // B
+    //   if (selectedLink) {
+    //     // set link direction to both left and right
+    //     selectedLink.left = true;
+    //     selectedLink.right = true;
+    //   }
+    //   restart();
+    //   break;
+    // case 76: // L
+    //   if (selectedLink) {
+    //     // set link direction to left only
+    //     selectedLink.left = true;
+    //     selectedLink.right = false;
+    //   }
+    //   restart();
+    //   break;
+    // case 82: // R
+    //   if (selectedNode) {
+    //     // toggle node reflexivity
+    //     selectedNode.reflexive = !selectedNode.reflexive;
+    //   } else if (selectedLink) {
+    //     // set link direction to right only
+    //     selectedLink.left = false;
+    //     selectedLink.right = true;
+    //   }
+    //   restart();
+    //   break;
+    case  38: // up arrow
       if (selectedNode) {
-        // toggle node reflexivity
-        selectedNode.reflexive = !selectedNode.reflexive;
-      } else if (selectedLink) {
-        // set link direction to right only
-        selectedLink.left = false;
-        selectedLink.right = true;
+        // add one dollar
+        selectedNode.weight = selectedNode.weight + 1;
+      }
+      restart();
+      break;
+      
+    case  40: // up arrow
+      if (selectedNode) {
+        // add one dollar
+        selectedNode.weight = selectedNode.weight - 1;
       }
       restart();
       break;

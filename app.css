@@ -54,3 +54,8 @@ svg {
     text-anchor: middle;
     font-weight: bold;
   }
+
+  text.weight {
+    text-anchor: middle;
+    font-weight: bold;
+  }
