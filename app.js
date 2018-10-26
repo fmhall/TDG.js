@@ -144,7 +144,7 @@ function restart() {
       mousedownLink = d;
       selectedLink = (mousedownLink === selectedLink) ? null : mousedownLink;
       selectedNode = null;
-      restart();
+      //restart();
     })
     .merge(path);
 
