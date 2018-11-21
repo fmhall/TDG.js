@@ -88,7 +88,9 @@ let circle = svg.append('svg:g').selectAll('g');
 // mouse event vars
 let selectedNode = null;
 let selectedLink = null;
+let ctrlSelectedLink = null;
 let mousedownLink = null;
+let ctrlMousedownLink = null;
 let mousedownNode = null;
 let mouseupNode = null;
 
@@ -96,6 +98,7 @@ function resetMouseVars() {
   mousedownNode = null;
   mouseupNode = null;
   mousedownLink = null;
+  ctrlMousedownLink = null;
 }
 
 // update force layout (called automatically each iteration)
@@ -128,6 +131,7 @@ function restart() {
   // update existing links
   path.classed('selected', (d) => d === selectedLink);
   path.classed('ctrlSelected', (d) => d === ctrlSelectedLink);
+  console.log("1");
   // remove old links
   path.exit().remove();
 
@@ -138,20 +142,24 @@ function restart() {
     .classed('ctrlSelected', (d) => d === ctrlSelectedLink)
     .style('marker-start', (d) => '')
     .style('marker-end', (d) => '')
-    .on('keydown', (d) => { 
-      if (d3.event.upKey) return;
-    })
+    // .on('keydown', (d) => { 
+    //   if (d3.event.upKey) return;
+    // })
     .on('mousedown', (d) => {
-      if (d3.event.ctrlKey) {
+      if (d3.event.shiftKey) {
+        console.log("shift");
         ctrlMouseDownLink = d;
-        ctrlSelectedLink = (ctrlMousedownLink === ctrlSelectedLink) ? null : ctrlMousedownLink;
+        ctrlSelectedLink = d // (ctrlMousedownLink === ctrlSelectedLink) ? null : ctrlMousedownLink;
         selectedNode = null;
+        selectedLink = null;
       }
       else {
         // select link
+        console.log("not shift");
         mousedownLink = d;
         selectedLink = (mousedownLink === selectedLink) ? null : mousedownLink;
         selectedNode = null;
+        ctrlSelectedLink = null;
       }
       restart();
     })
@@ -180,7 +188,7 @@ function restart() {
     .style('stroke', (d) => d3.rgb(colors(d.id)).darker().toString())
     .classed('reflexive', (d) => d.reflexive)
     .classed('weight', (d) => d.weight)
-    .classed('selected', (d) => d === selectedNode)
+    // .classed('selected', (d) => d === selectedNode)
     .on('mouseover', function (d) {
       if (!mousedownNode || d === mousedownNode) return;
       // enlarge target node
@@ -192,12 +200,13 @@ function restart() {
       d3.select(this).attr('transform', '');
     })
     .on('mousedown', (d) => {
-      if (d3.event.ctrlKey) return;
+      if (d3.event.shiftKey) return;
 
       // select node
       mousedownNode = d;
       selectedNode = (mousedownNode === selectedNode) ? null : mousedownNode;
       selectedLink = null;
+      ctrlSelectedLink = null;
 
       // reposition drag line
       dragLine
@@ -264,7 +273,7 @@ function mousedown() {
   // because :active only works in WebKit?
   svg.classed('active', true);
 
-  if (d3.event.ctrlKey || mousedownNode || mousedownLink) return;
+  if (mousedownNode || mousedownLink || d3.event.shiftKey) return;
 
   // insert new node at point
   const point = d3.mouse(this);
@@ -320,7 +329,7 @@ function keydown() {
     svg.classed('ctrl', true);
   }
 
-  if (!selectedNode && !selectedLink) return;
+  if ((lastKeyDown !== d3.event.shiftKey) && !selectedNode && !selectedLink) return;
 
   switch (d3.event.keyCode) {
     case 8: // backspace
