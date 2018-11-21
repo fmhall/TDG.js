@@ -144,7 +144,7 @@ function restart() {
       mousedownLink = d;
       selectedLink = (mousedownLink === selectedLink) ? null : mousedownLink;
       selectedNode = null;
-      //restart();
+      restart();
     })
     .merge(path);
 
@@ -156,7 +156,7 @@ function restart() {
   circle.selectAll('circle')
     .style('fill', (d) => (d === selectedNode) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id))
     .classed('reflexive', (d) => d.reflexive)
-    .classed('weight', (d) => {d.weight})
+    .classed('weight', (d) => {d.weight});
 
   // remove old nodes
   circle.exit().remove();
