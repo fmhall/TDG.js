@@ -26,6 +26,10 @@ svg {
   path.link.selected {
     stroke-dasharray: 10,2;
   }
+
+  path.link.ctrlSelected {
+    stroke-dasharray: 1;
+  }
   
   path.link.dragline {
     pointer-events: none;
@@ -40,6 +44,10 @@ svg {
     cursor: pointer;
   }
   
+  /* circle.node.selected {
+
+  } */
+
   circle.node.reflexive {
     stroke: #000 !important;
     stroke-width: 2.5px;

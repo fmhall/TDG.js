@@ -127,7 +127,7 @@ function restart() {
 
   // update existing links
   path.classed('selected', (d) => d === selectedLink);
-
+  path.classed('ctrlSelected', (d) => d === ctrlSelectedLink);
   // remove old links
   path.exit().remove();
 
@@ -135,15 +135,24 @@ function restart() {
   path = path.enter().append('svg:path')
     .attr('class', 'link')
     .classed('selected', (d) => d === selectedLink)
+    .classed('ctrlSelected', (d) => d === ctrlSelectedLink)
     .style('marker-start', (d) => '')
     .style('marker-end', (d) => '')
+    .on('keydown', (d) => { 
+      if (d3.event.upKey) return;
+    })
     .on('mousedown', (d) => {
-      if (d3.event.ctrlKey) return;
-
-      // select link
-      mousedownLink = d;
-      selectedLink = (mousedownLink === selectedLink) ? null : mousedownLink;
-      selectedNode = null;
+      if (d3.event.ctrlKey) {
+        ctrlMouseDownLink = d;
+        ctrlSelectedLink = (ctrlMousedownLink === ctrlSelectedLink) ? null : ctrlMousedownLink;
+        selectedNode = null;
+      }
+      else {
+        // select link
+        mousedownLink = d;
+        selectedLink = (mousedownLink === selectedLink) ? null : mousedownLink;
+        selectedNode = null;
+      }
       restart();
     })
     .merge(path);
@@ -171,6 +180,7 @@ function restart() {
     .style('stroke', (d) => d3.rgb(colors(d.id)).darker().toString())
     .classed('reflexive', (d) => d.reflexive)
     .classed('weight', (d) => d.weight)
+    .classed('selected', (d) => d === selectedNode)
     .on('mouseover', function (d) {
       if (!mousedownNode || d === mousedownNode) return;
       // enlarge target node
@@ -194,7 +204,7 @@ function restart() {
         .classed('hidden', false)
         .attr('d', `M${mousedownNode.x},${mousedownNode.y}L${mousedownNode.x},${mousedownNode.y}`);
 
-      //restart();
+      restart();
     })
     .on('mouseup', function (d) {
       if (!mousedownNode) return;
